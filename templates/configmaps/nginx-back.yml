@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-back
+data:
+  default : |
+    server {
+      listen 80;  # Écoute sur le port 80 pour les connexions HTTP.
+      listen [::]:80;  # Écoute sur le port 80 pour les connexions HTTP en IPv6.
+
+      # Répertoire racine pour les fichiers du site web, souvent le dossier 'public' pour Laravel.
+      root /usr/src/fabriquepar/public; 
+
+      # Ajoute des en-têtes de sécurité.
+      add_header X-Frame-Options "SAMEORIGIN";  # Empêche l'encadrement du contenu du site par des pages externes (protection contre le clickjacking).
+      add_header X-Content-Type-Options "nosniff";  # Empêche les navigateurs d'essayer de deviner le type de contenu.
+
+      charset utf-8;  # Définit le jeu de caractères par défaut à UTF-8.
+
+      # Définition des logs d'accès et d'erreurs.
+      access_log /var/log/nginx/craftedby-access.log;  # Fichier de log pour les accès.
+      error_log /var/log/nginx/craftedby-error.log;  # Fichier de log pour les erreurs.
+
+      # Désactive les logs pour favicon.ico et robots.txt pour éviter des logs inutiles.
+      location = /favicon.ico { access_log off; log_not_found off; }
+      location = /robots.txt  { access_log off; log_not_found off; }
+
+      # Redirige les erreurs 404 vers index.php, typique pour les frameworks comme Laravel.
+      error_page 404 /index.php;
+
+      # Fichiers d'index par défaut.
+      index index.html index.htm index.php; 
+
+      # The request is redirected to index.php (api/categories -> index.php/api/categories)
+      location / {
+          try_files $uri $uri/ /index.php?$query_string;
+      }
+
+      add_header 'accept' 'application/json';
+      # add_header accept $hdr_accept;
+
+      # Configuration for fastcgi.
+      location ~ \.php$ {
+          fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+          fastcgi_index index.php;
+          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+          include fastcgi_params;
+      }
+    }
