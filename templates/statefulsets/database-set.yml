@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: craftedby
+  name: database
+spec:
+  selector:
+    matchLabels:
+      app: database
+  serviceName: database
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      containers:
+      - name: database
+        image: mysql:8.1
+        envFrom:
+        - secretRef:
+            name: database-credentials
+        ports:
+        - containerPort: 80
+          name: mysql
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+          readOnly: false
+        securityContext:
+          allowPrivilegeEscalation: false
+        #   runAsNonRoot: true
+        #   # runAsUser: 1000
+        #   runAsGroup: 1000
+        #   seccompProfile:
+        #     type: RuntimeDefault
+        #   capabilities:
+        #     drop: ["ALL"]
+      # volumes:
+      # - name: mysql-data
+      #   persistentVolumeClaim:
+      #     claimName: craftedby-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi

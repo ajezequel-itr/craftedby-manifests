@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: craftedby-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1 # To remove ? 
+  labels:
+    name: craftedby-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.url }}
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: "/"
+        backend:
+          service: 
+            name: frontend
+            port: 
+              number: 80
+              

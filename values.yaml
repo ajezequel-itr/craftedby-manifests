@@ -1,0 +1,5 @@
+database:
+  name: laravel
+  password: passwd #To change ! Needs to be encrypted
+  username: floppa
+url: craftedby.127.0.0.1.nip.io
