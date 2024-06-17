@@ -7,6 +7,10 @@ on:
 
 jobs: 
   KICS:
+    permissions:
+      contents: read
+      security-events: write
+
     environment: Dev
     runs-on: ubuntu-latest
     name: Security checking of helm chart
