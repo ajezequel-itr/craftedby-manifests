@@ -35,6 +35,7 @@ spec:
         - mountPath: /usr/src/fabriquepar/.env
           name: laravel-env
           subPath: .env
+          readOnly: true
       volumes:
       - name: laravel-env
         configMap:

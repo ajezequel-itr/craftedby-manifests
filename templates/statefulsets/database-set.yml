@@ -26,8 +26,9 @@ spec:
         volumeMounts:
         - name: mysql-data
           mountPath: /var/lib/mysql
-        # securityContext:
-        #   allowPrivilegeEscalation: false
+          readOnly: false
+        securityContext:
+          allowPrivilegeEscalation: false
         #   runAsNonRoot: true
         #   # runAsUser: 1000
         #   runAsGroup: 1000

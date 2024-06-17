@@ -36,6 +36,7 @@ spec:
         - mountPath: /usr/src/fabriquepar/.env
           name: vite-env
           subPath: .env
+          readOnly: true
       volumes:
       - name: vite-env
         configMap:
