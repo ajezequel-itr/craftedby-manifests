@@ -30,14 +30,26 @@ spec:
           capabilities:
             drop: ["ALL"]
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         volumeMounts:
-        - mountPath: /usr/src/fabriquepar/.env
-          name: laravel-env
+        - mountPath: /var/www/html/fabriquepar/.env
           subPath: .env
+          name: laravel-env
           readOnly: true
+        - mountPath: /etc/nginx/sites-available/default
+          subPath: default
+          name: nginx-conf
+          readOnly: true
+        # lifecycle:
+        #   postStart:
+        #     exec:
+        #       command: ["/bin/sh", "-c" , "curl 127.0.0.1:8080/api/categories || ( php artisan migrate && php artisan db:seed --class=DatabaseSeeder )"]
       volumes:
       - name: laravel-env
         configMap:
           defaultMode: 420
           name: laravel-env
+      - name: nginx-conf
+        configMap:
+          defaultMode: 420
+          name: nginx-back
