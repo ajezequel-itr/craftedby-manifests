@@ -13,7 +13,7 @@ jobs:
 
     environment: Dev
     runs-on: ubuntu-latest
-    name: Security checking of helm chart
+    name: Security checking of helm chart with KICS
     steps: 
     - uses: actions/checkout@v3
 
@@ -34,4 +34,26 @@ jobs:
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: results-dir/results.sarif
+        
+  KubeLinter:
+    permissions:
+      contents: read
+      security-events: write
 
+    environment: Dev
+    runs-on: ubuntu-latest
+    name: Security checking of helm chart with KubeLinter
+
+    steps:
+    - name: Scan repo with kube-linter
+      uses: stackrox/kube-linter-action@v1.0.4
+      with:
+        directory: templates
+        format: sarif
+        output-file: kube-linter.sarif
+
+    - name: Upload results
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: kube-linter.sarif
+    
